@@ -6,6 +6,7 @@ CREATE TABLE Ärzt_in (
     Geburtsdatum DATE NOT NULL,
 );
 
+-- CORRECT
 CREATE TABLE Patient_in (
     Versichertennummer varchar PRIMARY KEY,
     Name STRUCT(Titel varchar, Vorname varchar, Nachname varchar) NOT NULL,
@@ -14,48 +15,23 @@ CREATE TABLE Patient_in (
     Geschlecht CHAR,
 );
 
+-- CORRECT
 CREATE TABLE Diagnose (
     ICD varchar PRIMARY KEY,
     Zusatzinformation CHAR NOT NULL,
     Beschreibung varchar,
 );
 
+create sequence termin_id start 1;
 create table Termin (
-    ID uinteger primary key,
+    ID uinteger primary key default nextval('termin_id'),
     Zeitpunkt datetime not null,
-    Zusatzgebühren uinteger not null,
+    Zusatzgebühren usmallint not null check (Zusatzgebühren <= 500) default 0,
     ist_Neupatient_in boolean not null,
-    Ärzt_in int,
+    Ärzt_in int not null,
+    Patient_in varchar not null,
     foreign key(Ärzt_in) references Ärzt_in(LANR),
-);
-
-create table OP_Saal (
-    Raumnummer utinyint,
-);
-
-CREATE TABLE OP (
-    Nummer INTEGER PRIMARY KEY,
-    Dringlichkeit ubigint not null,
-    ist_Vollnarkose boolean not null,
-    Datum date not null,
-    Startzeit time not null,
-    Endzeit time not null,
-    Patient_in varchar,
     foreign key(Patient_in) references Patient_in(Versichertennummer),
-    OP_Saal utinyint,
-    foreign key(OP_Saal) references OP_Saal(Raumnummer),
-);
-
-CREATE TABLE Krankenhaus (
-    Betten INTEGER NOT NULL,
-    Bettenauslastung FLOAT NOT NULL,
-    ist_privatisiert BOOLEAN NOT NULL,
-    ist_Universitätsklinikum BOOLEAN NOT NULL,
-);
-
-CREATE TABLE Privatpraxis (
-    Fachrichtung varchar NOT NULL,
-    Zahlungsart varchar NOT NULL,
 );
 
 CREATE TABLE Gesundheitseinrichtung (
@@ -65,14 +41,59 @@ CREATE TABLE Gesundheitseinrichtung (
     Adresse varchar not null,
     Umsatz int not null,
     primary key (SteuerID, Name),
+
+    Betten INTEGER,
+    Bettenauslastung FLOAT,
+    ist_privatisiert BOOLEAN,
+    ist_Universitätsklinikum BOOLEAN,
+
+    Fachrichtung varchar,
+    Zahlungsart varchar,
+);
+
+-- CORRECT
+create table "OP-Saal" (
+    Raumnummer utinyint not null check (Raumnummer <= 20),
+    SteuerID varchar not null,
+    Name varchar not null,
+    primary key (SteuerID, Name, Raumnummer),
+    foreign key(SteuerID, Name) references Gesundheitseinrichtung(SteuerID, Name),
+);
+
+CREATE TABLE OP (
+    Nummer INTEGER PRIMARY KEY,
+    Dringlichkeit ubigint not null,
+    ist_Vollnarkose boolean not null,
+    Datum date not null,
+    Startzeit time not null,
+    Endzeit time not null,
+    Patient_in varchar not null,
+    SteuerID varchar not null,
+    Name varchar not null,
+    Raumnummer utinyint not null,
+    foreign key(Patient_in) references Patient_in(Versichertennummer),
+    foreign key(SteuerID, Name, Raumnummer) references "OP-Saal"(SteuerID, Name, Raumnummer),
+);
+
+--
+-- RELATIONS
+--
+
+create table stellt (
+    Zeitpunkt datetime not null,
+    Ärzt_in int not null,
+    Diagnose varchar not null,
+    primary key (Ärzt_in, Diagnose),
+    foreign key(Ärzt_in) references Ärzt_in(LANR),
+    foreign key(Diagnose) references Diagnose(ICD),
 );
 
 create table angestellt (
     Einstellungsdatum date not null,
     Gehalt decimal(7, 2) not null,
-    Ärzt_in int,
-    SteuerID varchar,
-    Name varchar,
+    Ärzt_in int not null,
+    SteuerID varchar not null,
+    Name varchar not null,
     foreign key(Ärzt_in) references Ärzt_in(LANR),
     foreign key(SteuerID, Name) references Gesundheitseinrichtung(SteuerID, Name),
 );
