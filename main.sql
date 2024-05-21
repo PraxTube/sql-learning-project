@@ -1,9 +1,10 @@
+-- CORRECT
 CREATE TABLE Ärzt_in (
-    LANR int PRIMARY KEY,
+    LANR varchar PRIMARY KEY check (length(LANR) == 9),
     Fachgebiet varchar NOT NULL,
     Name STRUCT(Titel varchar, Vorname varchar, Nachname varchar) NOT NULL,
     Sprachen varchar[] NOT NULL,
-    Geburtsdatum DATE NOT NULL,
+    Geburtsdatum DATE NOT NULL check (Geburtsdatum - date '1956-05-17' > 0),
 );
 
 -- CORRECT
@@ -28,7 +29,7 @@ create table Termin (
     Zeitpunkt datetime not null,
     Zusatzgebühren usmallint not null check (Zusatzgebühren <= 500) default 0,
     ist_Neupatient_in boolean not null,
-    Ärzt_in int not null,
+    Ärzt_in varchar not null,
     Patient_in varchar not null,
     foreign key(Ärzt_in) references Ärzt_in(LANR),
     foreign key(Patient_in) references Patient_in(Versichertennummer),
@@ -81,7 +82,7 @@ CREATE TABLE OP (
 
 create table stellt (
     Zeitpunkt datetime not null,
-    Ärzt_in int not null,
+    Ärzt_in varchar not null,
     Diagnose varchar not null,
     primary key (Ärzt_in, Diagnose),
     foreign key(Ärzt_in) references Ärzt_in(LANR),
@@ -89,9 +90,9 @@ create table stellt (
 );
 
 create table angestellt (
-    Einstellungsdatum date not null,
-    Gehalt decimal(7, 2) not null,
-    Ärzt_in int not null,
+    Einstellungsdatum date not null check (Einstellungsdatum != date ''),
+    Gehalt decimal(7, 2) not null check (Gehalt >= 5288.32 and Gehalt <= 11019.20),
+    Ärzt_in varchar not null,
     SteuerID varchar not null,
     Name varchar not null,
     foreign key(Ärzt_in) references Ärzt_in(LANR),
