@@ -38,8 +38,18 @@ update Hotel set OrtID = '4c2370e6-515b-4ad6-bc29-edf02cd14952' where HotelID = 
 update Hotel set OrtID = 'b7782c2e-a9aa-4a14-bbc2-7aca0b7aff82' where HotelID = 1006;
 
 create table ManagerIn (
+    MitarbeiterIn varchar primary key,
     Letzte_Fortbildung date,
     Nächste_Fortbildung date not null,
     Bonus decimal(8, 2) not null,
     check (Letzte_Fortbildung is null or Nächste_Fortbildung - Letzte_Fortbildung > 0),
+    foreign key (MitarbeiterIn) references MitarbeiterIn(PersID),
 );
+
+insert into ManagerIn values 
+    ('em300003', date '2023-10-21', date '2024-06-12', 936.50),
+    ('em300004', date '2024-01-13', date '2024-09-02', 0),
+    ('em300011', date '2023-11-14', date '2024-06-12', 1500),
+    ('em300013', date '2024-01-13', date '2024-09-02', 345.78),
+    ('em300016', date '2023-11-14', date '2024-07-27', 0),
+    ('em300021', date '2024-01-13', date '2024-07-27', 0);
