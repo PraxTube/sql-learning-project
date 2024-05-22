@@ -29,9 +29,9 @@ create table Termin (
     Zeitpunkt datetime not null,
     Zusatzgebühren usmallint not null check (Zusatzgebühren <= 500) default 0,
     ist_Neupatient_in boolean not null,
-    Ärzt_in varchar not null,
-    foreign key(Ärzt_in) references Ärzt_in(LANR),
-    unique (Ärzt_in, Zeitpunkt),
+    LANR varchar not null,
+    foreign key(LANR) references Ärzt_in(LANR),
+    unique (LANR, Zeitpunkt),
 );
 
 CREATE TABLE Gesundheitseinrichtung (
@@ -72,12 +72,12 @@ CREATE TABLE OP (
     Datum date not null,
     Startzeit time not null,
     Endzeit time not null,
-    Patient_in varchar not null,
+    Versichertennummer varchar not null,
     SteuerID varchar not null,
     Name varchar not null,
-    "OP-Saal" utinyint not null,
-    foreign key(Patient_in) references Patient_in(Versichertennummer),
-    foreign key(SteuerID, Name, "OP-Saal") references "OP-Saal"(SteuerID, Name, Raumnummer),
+    Raumnummer utinyint not null,
+    foreign key(Versichertennummer) references Patient_in(Versichertennummer),
+    foreign key(SteuerID, Name, Raumnummer) references "OP-Saal"(SteuerID, Name, Raumnummer),
     check (datesub('minute', Endzeit, Startzeit) >= 15 and datesub('minute', Endzeit, Startzeit) <= 9 * 60)
 );
 
