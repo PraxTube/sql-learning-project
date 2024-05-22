@@ -66,7 +66,7 @@ create table "OP-Saal" (
 );
 
 CREATE TABLE OP (
-    Nummer ubigint PRIMARY KEY,
+    Nummer uuid primary key,
     Dringlichkeit varchar not null check (Dringlichkeit == 'Notoperation' or Dringlichkeit == 'dringliche Operation' or Dringlichkeit == 'frühelektive Operation' or Dringlichkeit == 'elektive Operation'),
     ist_Vollnarkose boolean not null,
     Datum date not null,
