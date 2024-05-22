@@ -85,32 +85,36 @@ CREATE TABLE OP (
 -- RELATIONS
 --
 
+-- CORRECT
 create table stellt (
+    LANR varchar not null,
+    ICD varchar not null,
     Zeitpunkt datetime not null,
-    Ärzt_in varchar not null,
-    Diagnose varchar not null,
-    primary key (Ärzt_in, Diagnose),
-    foreign key(Ärzt_in) references Ärzt_in(LANR),
-    foreign key(Diagnose) references Diagnose(ICD),
-    unique (Ärzt_in, Zeitpunkt),
+    primary key (LANR, ICD),
+    foreign key(LANR) references Ärzt_in(LANR),
+    foreign key(ICD) references Diagnose(ICD),
+    unique (LANR, Zeitpunkt),
 );
 
+-- CORRECT
 create table angestellt (
-    Einstellungsdatum date not null check (Einstellungsdatum != date ''),
-    Gehalt decimal(7, 2) not null check (Gehalt >= 5288.32 and Gehalt <= 11019.20),
-    Ärzt_in varchar not null,
+    LANR varchar not null,
     SteuerID varchar not null,
     Name varchar not null,
-    foreign key(Ärzt_in) references Ärzt_in(LANR),
+    Einstellungsdatum date not null check (Einstellungsdatum != date ''),
+    Gehalt decimal(7, 2) not null check (Gehalt >= 5288.32 and Gehalt <= 11019.20),
+    primary key (LANR, SteuerID, Name),
+    foreign key(LANR) references Ärzt_in(LANR),
     foreign key(SteuerID, Name) references Gesundheitseinrichtung(SteuerID, Name),
 );
 
+-- CORRECT
 create table hat (
-    Termin uinteger not null,
-    Diagnose varchar not null,
-    Patient_in varchar not null,
-    primary key (Termin, Diagnose),
-    foreign key (Termin) references Termin(ID),
-    foreign key (Diagnose) references Diagnose(ICD),
-    foreign key (Patient_in) references Patient_in(Versichertennummer),
+    ID uinteger not null,
+    ICD varchar not null,
+    Versichertennummer varchar not null,
+    primary key (ID, ICD),
+    foreign key (ID) references Termin(ID),
+    foreign key (ICD) references Diagnose(ICD),
+    foreign key (Versichertennummer) references Patient_in(Versichertennummer),
 );
