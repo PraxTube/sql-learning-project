@@ -23,11 +23,12 @@ CREATE TABLE Diagnose (
     Beschreibung varchar,
 );
 
+-- CORRECT
 create sequence termin_id start 1;
 create table Termin (
     ID uinteger primary key default nextval('termin_id') check (ID <= 3_000_000),
     Zeitpunkt datetime not null,
-    Zusatzgebühren usmallint not null check (Zusatzgebühren <= 500) default 0,
+    Zusatzgebühren decimal(5, 2) not null check (Zusatzgebühren <= 500.00) default 0.00,
     ist_Neupatient_in boolean not null,
     LANR varchar not null,
     foreign key(LANR) references Ärzt_in(LANR),
