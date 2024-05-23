@@ -9,7 +9,7 @@ CREATE TABLE Ärzt_in (
 
 -- CORRECT
 CREATE TABLE Patient_in (
-    Versichertennummer varchar PRIMARY KEY,
+    Versichertennummer varchar PRIMARY KEY check(length(Versichertennummer) == 10 and left(Versichertennummer, 1) ~ '^[A-Z]' and right(Versichertennummer, 9) ~ '^[0-9]{9}$'),
     Name STRUCT(Titel varchar, Vorname varchar, Nachname varchar) NOT NULL,
     Geburtsdatum DATE NOT NULL,
     Beschäftigung varchar,
@@ -43,16 +43,10 @@ CREATE TABLE Gesundheitseinrichtung (
     Umsatz decimal(15, 2) not null,
     Typ varchar not null check (Typ == 'Krankenhaus' or Typ == 'Privatpraxis'),
     primary key (SteuerID, Name),
-);
-
-create table Krankenhaus (
     Betten INTEGER,
     Bettenauslastung FLOAT,
     ist_privatisiert BOOLEAN,
     ist_Universitätsklinikum BOOLEAN,
-);
-
-create table Privatpraxis (
     Fachrichtung varchar,
     Zahlungsart varchar check (Zahlungsart == 'Versichert' or Zahlungsart == 'Selbstzahler'),
 );
@@ -102,7 +96,14 @@ create table angestellt (
     LANR varchar not null,
     SteuerID varchar not null,
     Name varchar not null,
-    Einstellungsdatum date not null check (Einstellungsdatum != date ''),
+    Einstellungsdatum date not null check (
+        strftime(Einstellungsdatum, '%m-%d') != '01-01'
+        and strftime(Einstellungsdatum, '%m-%d') != '03-08'
+        and strftime(Einstellungsdatum, '%m-%d') != '05-01'
+        and strftime(Einstellungsdatum, '%m-%d') != '10-03'
+        and strftime(Einstellungsdatum, '%m-%d') != '12-25'
+        and strftime(Einstellungsdatum, '%m-%d') != '12-26'
+    ),
     Gehalt decimal(7, 2) not null check (Gehalt >= 5288.32 and Gehalt <= 11019.20),
     primary key (LANR, SteuerID, Name),
     foreign key(LANR) references Ärzt_in(LANR),

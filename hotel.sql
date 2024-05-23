@@ -59,6 +59,6 @@ insert into ManagerIn values
     ('Seiler, Marena', date '2023-10-21', date '2024-06-12', 936.50),
     ('Meddings, Otis', date '2024-01-13', date '2024-09-02', 0),
     ('Van den Dael, Cam', date '2023-11-14', date '2024-06-12', 1500),
-    ('Trazzi Sofie', date '2024-01-13', date '2024-09-02', 345.78),
+    ('Trazzi, Sofie', date '2024-01-13', date '2024-09-02', 345.78),
     ('Dermot, Colline', date '2023-11-14', date '2024-07-27', 0),
     ('Lingner, Bing', date '2024-01-13', date '2024-07-27', 0);
