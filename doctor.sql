@@ -46,30 +46,38 @@ CREATE TABLE Gesundheitseinrichtung (
     Bundesland varchar not null check (length(Bundesland) == 5 and starts_with(Bundesland, 'DE-')),
     Adresse varchar not null,
     Umsatz decimal(15, 2) not null,
-    Typ varchar not null check (Typ == 'Krankenhaus' or Typ == 'Privatpraxis'),
+    Typ varchar not null,
     primary key (SteuerID, Name),
-    Betten usmallint,
-    Bettenauslastung FLOAT,
+    Betten usmallint check(Betten <= 1500),
+    Bettenauslastung FLOAT check(Bettenauslastung >= 0.0 and Bettenauslastung <= 1.0),
     ist_privatisiert BOOLEAN,
     ist_Universitätsklinikum BOOLEAN,
     Fachrichtung varchar,
-    Zahlungsart varchar,
+    Zahlungsart varchar check(Zahlungsart in ('Versichert', 'Selbstzahler')),
     check (
         (Typ == 'Krankenhaus'
-            and Betten <= 1500
-            and Bettenauslastung >= 0.0 and Bettenauslastung <= 1.0
-            and ist_privatisiert != null
-            and ist_Universitätsklinikum != null
-            and Fachrichtung == null
-            and Zahlungsart == null
+            and Betten is not null
+            and Bettenauslastung is not null
+            and ist_privatisiert is not null
+            and ist_Universitätsklinikum is not null
+            and Fachrichtung is null
+            and Zahlungsart is null
         ) or 
         (Typ == 'Privatpraxis'
-            and Betten == null
-            and Bettenauslastung == null
-            and ist_privatisiert == null
-            and ist_Universitätsklinikum == null
-            and Fachrichtung != null
-            and Zahlungsart in ('Versichert', 'Selbstzahler')
+            and Betten is null
+            and Bettenauslastung is null
+            and ist_privatisiert is null
+            and ist_Universitätsklinikum is null
+            and Fachrichtung is not null
+            and Zahlungsart is not null
+        ) or
+        (
+            Betten is null
+            and Bettenauslastung is null
+            and ist_privatisiert is null
+            and ist_Universitätsklinikum is null
+            and Fachrichtung is null
+            and Zahlungsart is null
         )
     ),
 );
