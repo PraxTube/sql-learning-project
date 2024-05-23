@@ -9,11 +9,13 @@ CREATE TABLE Ärzt_in (
 
 -- CORRECT
 CREATE TABLE Patient_in (
-    Versichertennummer varchar PRIMARY KEY check(length(Versichertennummer) == 10 and left(Versichertennummer, 1) ~ '^[A-Z]' and right(Versichertennummer, 9) ~ '^[0-9]{9}$'),
-    Name STRUCT(Titel varchar, Vorname varchar, Nachname varchar) NOT NULL,
-    Geburtsdatum DATE NOT NULL,
+    Versichertennummer varchar PRIMARY KEY check(
+        length(Versichertennummer) == 10 and Versichertennummer ~ '[A-Z][0-9]{9}'
+    ),
+    Name STRUCT(Titel varchar, Vorname varchar, Nachname varchar) not null,
+    Geburtsdatum date not null,
     Beschäftigung varchar,
-    Geschlecht CHAR,
+    Geschlecht varchar check(Geschlecht in ('d', 'w', 'm')),
 );
 
 -- CORRECT
