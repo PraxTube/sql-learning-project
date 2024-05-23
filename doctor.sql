@@ -37,7 +37,11 @@ create table Termin (
 
 -- CORRECT
 CREATE TABLE Gesundheitseinrichtung (
-    SteuerID varchar not null check (length(SteuerID) == 11 and starts_with(SteuerID, 'DE') and right(SteuerID, 9) ~ '^[0-9]{9}$'),
+    SteuerID varchar not null check (
+        length(SteuerID) == 11
+        and starts_with(SteuerID, 'DE')
+        and right(SteuerID, 9) ~ '^[0-9]{9}$'
+    ),
     Name varchar not null,
     Bundesland varchar not null check (length(Bundesland) == 5 and starts_with(Bundesland, 'DE-')),
     Adresse varchar not null,
@@ -56,8 +60,14 @@ CREATE TABLE Gesundheitseinrichtung (
             and Bettenauslastung >= 0.0 and Bettenauslastung <= 1.0
             and ist_privatisiert != null
             and ist_Universitätsklinikum != null
+            and Fachrichtung == null
+            and Zahlungsart == null
         ) or 
         (Typ == 'Privatpraxis'
+            and Betten == null
+            and Bettenauslastung == null
+            and ist_privatisiert == null
+            and ist_Universitätsklinikum == null
             and Fachrichtung != null
             and Zahlungsart in ('Versichert', 'Selbstzahler')
         )
@@ -85,13 +95,13 @@ CREATE TABLE OP (
     Datum date not null,
     Startzeit time not null,
     Endzeit time not null,
-    Versichertennummer varchar not null,
+    Versichertennummer varchar,
     SteuerID varchar not null,
     Name varchar not null,
     Raumnummer utinyint not null,
     foreign key(Versichertennummer) references Patient_in(Versichertennummer),
     foreign key(SteuerID, Name, Raumnummer) references "OP-Saal"(SteuerID, Name, Raumnummer),
-    check (datesub('minute', Endzeit, Startzeit) >= 15 and datesub('minute', Endzeit, Startzeit) <= 9 * 60)
+    check (datesub('minute', Endzeit, Startzeit) >= 15 and datesub('minute', Endzeit, Startzeit) <= 540)
 );
 
 --
