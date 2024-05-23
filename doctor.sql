@@ -19,7 +19,7 @@ CREATE TABLE Patient_in (
 -- CORRECT
 CREATE TABLE Diagnose (
     ICD varchar primary key check (length(ICD) == 3 and left(ICD, 1) ~ '^[A-Z]' and right(ICD, 2) ~ '^[0-9]{9}$'),
-    Zusatzinformation varchar not null check (Zusatzinformation == 'G' or Zusatzinformation == 'V' or Zusatzinformation == 'A' or Zusatzinformation == 'L' or Zusatzinformation == 'R' or Zusatzinformation == 'B'),
+    Zusatzinformation varchar not null check (Zusatzinformation in ('G', 'V', 'A', 'L', 'R', 'B')),
     Beschreibung varchar,
 );
 
