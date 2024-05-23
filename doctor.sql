@@ -18,8 +18,8 @@ CREATE TABLE Patient_in (
 
 -- CORRECT
 CREATE TABLE Diagnose (
-    ICD varchar PRIMARY KEY check (length(ICD) == 3 and left(ICD, 1) ~ '^[A-Z]' and right(ICD, 2) ~ '^[0-9]{9}$'),
-    Zusatzinformation CHAR NOT NULL,
+    ICD varchar primary key check (length(ICD) == 3 and left(ICD, 1) ~ '^[A-Z]' and right(ICD, 2) ~ '^[0-9]{9}$'),
+    Zusatzinformation varchar not null check (Zusatzinformation == 'G' or Zusatzinformation == 'V' or Zusatzinformation == 'A' or Zusatzinformation == 'L' or Zusatzinformation == 'R' or Zusatzinformation == 'B'),
     Beschreibung varchar,
 );
 
@@ -35,6 +35,7 @@ create table Termin (
     unique (LANR, Zeitpunkt),
 );
 
+-- CORRECT
 CREATE TABLE Gesundheitseinrichtung (
     SteuerID varchar not null check (length(SteuerID) == 11 and starts_with(SteuerID, 'DE') and right(SteuerID, 9) ~ '^[0-9]{9}$'),
     Name varchar not null,
@@ -43,12 +44,24 @@ CREATE TABLE Gesundheitseinrichtung (
     Umsatz decimal(15, 2) not null,
     Typ varchar not null check (Typ == 'Krankenhaus' or Typ == 'Privatpraxis'),
     primary key (SteuerID, Name),
-    Betten INTEGER,
+    Betten usmallint,
     Bettenauslastung FLOAT,
     ist_privatisiert BOOLEAN,
     ist_Universitätsklinikum BOOLEAN,
     Fachrichtung varchar,
-    Zahlungsart varchar check (Zahlungsart == 'Versichert' or Zahlungsart == 'Selbstzahler'),
+    Zahlungsart varchar,
+    check (
+        (Typ == 'Krankenhaus'
+            and Betten <= 1500
+            and Bettenauslastung >= 0.0 and Bettenauslastung <= 1.0
+            and ist_privatisiert != null
+            and ist_Universitätsklinikum != null
+        ) or 
+        (Typ == 'Privatpraxis'
+            and Fachrichtung != null
+            and Zahlungsart in ('Versichert', 'Selbstzahler')
+        )
+    ),
 );
 
 -- CORRECT
@@ -62,7 +75,12 @@ create table "OP-Saal" (
 
 CREATE TABLE OP (
     Nummer uuid primary key,
-    Dringlichkeit varchar not null check (Dringlichkeit == 'Notoperation' or Dringlichkeit == 'dringliche Operation' or Dringlichkeit == 'frühelektive Operation' or Dringlichkeit == 'elektive Operation'),
+    Dringlichkeit varchar not null check (Dringlichkeit in (
+        'Notoperation',
+        'dringliche Operation',
+        'frühelektive Operation',
+        'elektive Operation',
+    )),
     ist_Vollnarkose boolean not null,
     Datum date not null,
     Startzeit time not null,
