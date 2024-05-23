@@ -10,10 +10,7 @@ update MitarbeiterIn set Gehalt = 2200 where Abteilung = 'Reinigung';
 update MitarbeiterIn set Gehalt = 2600 where Abteilung = 'Rezeption';
 update MitarbeiterIn set Gehalt = 3200 where Abteilung = 'Management';
 
-alter table MitarbeiterIn add column Angestellt_am_new date;
-update MitarbeiterIn set Angestellt_am_new = strptime(Angestellt_am, '%d-%m-%Y');
-alter table MitarbeiterIn drop column Angestellt_am;
-alter table MitarbeiterIn rename column Angestellt_am_new to Angestellt_am;
+alter table MitarbeiterIn alter Angestellt_am set data type date using strptime(Angestellt_am, '%d-%m-%Y');
 
 create table Ort (
     OrtID uuid primary key,
