@@ -111,7 +111,7 @@ CREATE TABLE OP (
     Raumnummer utinyint not null,
     foreign key(Versichertennummer) references Patient_in(Versichertennummer),
     foreign key(SteuerID, Name, Raumnummer) references "OP-Saal"(SteuerID, Name, Raumnummer),
-    check (Endzeit > Startzeit and datesub('minute', Endzeit, Startzeit) >= 15 and datesub('minute', Endzeit, Startzeit) <= 540)
+    check (Endzeit >= Startzeit and datesub('minute', Startzeit, Endzeit) between 15 and 540),
 );
 
 --
